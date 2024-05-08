@@ -1,4 +1,6 @@
-# Scrape Playground
+# Web Crawler for LLM Apps
+
+Scrape Playground
 
 Playground for BuildShip's scrape nodes: Scrape, Dynamic Scrape, Web Crawler.
 
