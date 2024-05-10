@@ -41,7 +41,7 @@ const scrapeOptions = [
     description:
       "Scrape a given web url and return the text content. Works great for less dynamic sites that don't rely on javascript to load.",
     image: "static.png",
-    docs: "https://docs.buildship.com/utility-nodes/scrape-web-url#using-the-scrape-web-url-node",
+    docs: "https://docs.buildship.com/utility-nodes/scrape-web-url",
   },
   {
     value: "dynamic",
@@ -49,6 +49,7 @@ const scrapeOptions = [
     description:
       "Scrape a given web url and return the text content. Works great for more complex sites that rely on javascript to load.",
     image: "dynamic.png",
+    docs: "https://docs.buildship.com/utility-nodes/scrape-web-url-dynamic",
   },
   {
     value: "crawl",
@@ -56,6 +57,7 @@ const scrapeOptions = [
     description:
       "Crawl a given web url and return the text content. Works great for sites that have multiple pages to scrape.",
     image: "crawler.png",
+    docs: "https://docs.buildship.com/utility-nodes/crawler",
   },
 ];
 
@@ -81,7 +83,7 @@ export default function App() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const url = "https://j1bm7e.buildship.run/buildship-scrape";
+    const url = import.meta.env.VITE_BUILDSHIP_WORKFLOW;
     try {
       const response = await fetch(url, {
         method: "POST",
