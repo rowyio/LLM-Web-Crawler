@@ -3,6 +3,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -24,17 +31,83 @@ import {
 import { ThemeProvider } from "./components/theme-provider";
 import { ModeToggle } from "./components/mode-toggle";
 
-const formSchema = z.object({
-  url: z.string().url(),
-  selector: z.string().optional(),
-  mode: z.string({ message: "Please select a scrape mode" }),
-  maxConcurrency: z.coerce.number().optional(),
-  maxRequestsPerCrawl: z.coerce.number().optional(),
-  proxyUrls: z.array(z.string()).optional(),
-  crawlId: z.string().optional(),
-});
+const formSchema = z
+  .object({
+    url: z.string().url(),
+    selector: z.string().optional(),
+    mode: z.string({ message: "Please select a scrape mode" }),
+    maxConcurrency: z.coerce.number().optional(),
+    maxRequestsPerCrawl: z.coerce.number().optional(),
+    proxyUrls: z.array(z.string()).optional(),
+    crawlId: z.string().optional(),
+    llmExtractionFields: z.string().optional(),
+    llmExtractionMode: z.enum(["html", "text"]).default("html"),
+  })
+  .refine(
+    (data) => {
+      if (
+        data.mode === "llmExtraction" &&
+        data.llmExtractionFields === undefined
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        "LLM Extraction Fields are required when LLM Extraction mode is selected.",
+      path: ["llmExtractionFields"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (
+        data.mode === "llmExtraction" &&
+        data.llmExtractionMode === undefined
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        "LLM Extraction Mode is required when LLM Extraction mode is selected.",
+      path: ["llmExtractionMode"],
+    }
+  );
 
-const scrapeOptions = [
+type ScrapeOption = {
+  value: string;
+  label: string | React.ReactNode;
+  description: string;
+  image: string;
+  docs?: string;
+};
+
+const scrapeOptions: ScrapeOption[] = [
+  {
+    value: "llmExtraction",
+    label: (
+      <div className="flex">
+        <h3 className="font-semibold">LLM Extraction</h3>
+        <div>
+          <span className="ml-2 rounded-md bg-primary px-1.5 py-0.5 text-xs leading-none text-secondary no-underline group-hover:no-underline">
+            New
+          </span>
+        </div>
+      </div>
+    ),
+    description: "Easily extract structured data from any web page using GPT.",
+    image: "llmExtractor.png",
+  },
+  {
+    value: "crawl",
+    label: "Crawl",
+    description:
+      "Crawl a given web url and return the text content. Works great for sites that have multiple pages to scrape.",
+    image: "crawler.png",
+    docs: "https://docs.buildship.com/utility-nodes/crawler",
+  },
   {
     value: "static",
     label: "Static",
@@ -50,14 +123,6 @@ const scrapeOptions = [
       "Scrape a given web url and return the text content. Works great for more complex sites that rely on javascript to load.",
     image: "dynamic.png",
     docs: "https://docs.buildship.com/utility-nodes/scrape-web-url-dynamic",
-  },
-  {
-    value: "crawl",
-    label: "Crawl",
-    description:
-      "Crawl a given web url and return the text content. Works great for sites that have multiple pages to scrape.",
-    image: "crawler.png",
-    docs: "https://docs.buildship.com/utility-nodes/crawler",
   },
 ];
 
@@ -98,7 +163,10 @@ export default function App() {
           content = await response.text();
         } else {
           const data = await response.json();
-          if (form.getValues().mode === "crawl") {
+          if (
+            form.getValues().mode === "crawl" ||
+            form.getValues().mode === "llmExtraction"
+          ) {
             content = JSON.stringify(data, null, 2); // Render content as JSON for crawl mode
             setAccordionOpen(false);
           } else {
@@ -139,12 +207,11 @@ export default function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="px-4 pb-8 pt-4 space-y-14 max-w-7xl mx-auto">
-        <header className="border-b pb-5 flex justify-between items-center">
+        <header className="border-b pb-2 flex justify-between items-center">
           <div className="flex items-center">
             <img src="logo.webp" alt="" width={35} />
             <h2 className="text-lg">BuildShip Scrape Playground</h2>
           </div>
-
           <ModeToggle />
         </header>
         <div>
@@ -188,11 +255,6 @@ export default function App() {
                           <AccordionTrigger
                             onClick={() => setAccordionOpen(!accordionOpen)}
                           >
-                            {" "}
-                            {form.getValues().mode &&
-                              scrapeOptions.find(
-                                (o) => o.value == form.getValues().mode
-                              )?.label + " "}
                             Options
                           </AccordionTrigger>
                           <AccordionContent>
@@ -295,6 +357,66 @@ export default function App() {
                                   />
                                 </div>
                               )}
+
+                              {form.getValues().mode === "llmExtraction" && (
+                                <div className="space-y-3">
+                                  <FormField
+                                    control={form.control}
+                                    name="llmExtractionFields"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Extraction Fields</FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            {...field}
+                                            placeholder="title,price,url,description"
+                                          />
+                                        </FormControl>
+                                        <FormDescription>
+                                          Comma-separated list of fields to
+                                          extract using LLM.
+                                        </FormDescription>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+
+                                  <FormField
+                                    control={form.control}
+                                    name="llmExtractionMode"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Extraction Mode</FormLabel>
+                                        <FormControl>
+                                          <Select
+                                            {...field}
+                                            defaultValue="html"
+                                          >
+                                            <SelectTrigger>
+                                              <SelectValue placeholder="Select a mode" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="html">
+                                                HTML
+                                              </SelectItem>
+                                              <SelectItem value="text">
+                                                Text
+                                              </SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </FormControl>
+                                        <FormDescription>
+                                          Select the LLM extraction mode: HTML,
+                                          which preserves web page semantics, or
+                                          Text, which provides a concise context
+                                          without URLs, images, etc.
+                                        </FormDescription>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                </div>
+                              )}
                             </div>
                           </AccordionContent>
                         </AccordionItem>
@@ -318,8 +440,9 @@ export default function App() {
                                 <Clipboard size={16} />
                               )}
                             </Button>
-                            {form.getValues().mode === "crawl" &&
-                            content !== "" ? (
+                            {form.getValues().mode === "crawl" ||
+                            (form.getValues().mode == "llmExtraction" &&
+                              content !== "") ? (
                               isValidJSON(content) ? (
                                 <JSONPretty
                                   data={JSON.parse(content)}
@@ -344,14 +467,14 @@ export default function App() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>BuildShip Node (Scrape Mode)</FormLabel>
-                          <div className="space-y-4">
+                          <div className="space-2-4">
                             {scrapeOptions.map((option) => (
                               <label
                                 key={option.value}
-                                className={`block space-y-1 md:flex md:items-center md:space-x-4 cursor-pointer border-2 rounded p-4 ${
+                                className={`block space-y-1 md:flex md:items-center md:space-x-4 cursor-pointer  rounded p-4 ${
                                   field.value === option.value
-                                    ? "border-secondary"
-                                    : "border-transparent"
+                                    ? "bg-secondary"
+                                    : "bg-transparent"
                                 }`}
                               >
                                 <input
@@ -362,28 +485,35 @@ export default function App() {
                                 />
                                 <img
                                   src={option.image}
-                                  alt={option.label}
+                                  alt={option.value}
                                   className="w-52 rounded"
                                 />
                                 <div>
-                                  <h3 className="text-lg font-semibold">
-                                    {option.label}
-                                  </h3>
+                                  {typeof option.label === "string" ? (
+                                    <h3 className="font-semibold">
+                                      {option.label}
+                                    </h3>
+                                  ) : (
+                                    <>{option.label}</>
+                                  )}
+
                                   <p className="text-sm">
                                     {option.description}
                                   </p>
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    className="mt-3 text-xs"
-                                    asChild
-                                  >
-                                    <a href={option.docs} target="_blank">
-                                      Read more
-                                      <MoveRight className="ml-2 h-4 w-4" />
-                                    </a>
-                                  </Button>
+                                  {option.docs && (
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      size="sm"
+                                      className="mt-3 text-xs"
+                                      asChild
+                                    >
+                                      <a href={option.docs} target="_blank">
+                                        Read more
+                                        <MoveRight className="ml-2 h-4 w-4" />
+                                      </a>
+                                    </Button>
+                                  )}
                                 </div>
                               </label>
                             ))}
@@ -392,19 +522,25 @@ export default function App() {
                         </FormItem>
                       )}
                     />
-                    <Button
-                      type="submit"
-                      disabled={form.formState.isSubmitting}
-                      className="w-full"
-                    >
-                      {form.formState.isSubmitting
-                        ? form.getValues().mode === "crawl"
-                          ? "Crawling..."
-                          : "Scraping..."
-                        : form.getValues().mode === "crawl"
-                        ? "Crawl"
-                        : "Scrape"}
-                    </Button>
+                    <div className="sticky bottom-0 bg-background py-3 z-10">
+                      <Button
+                        type="submit"
+                        disabled={form.formState.isSubmitting}
+                        className="w-full"
+                      >
+                        {form.formState.isSubmitting
+                          ? form.getValues().mode === "crawl"
+                            ? "Crawling..."
+                            : form.getValues().mode === "llmExtraction"
+                            ? "Extracting..."
+                            : "Scraping..."
+                          : form.getValues().mode === "crawl"
+                          ? "Crawl"
+                          : form.getValues().mode === "llmExtraction"
+                          ? "Extract"
+                          : "Scrape"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </form>
