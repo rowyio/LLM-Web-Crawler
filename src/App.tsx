@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import { Check, Clipboard, MoveRight } from "lucide-react";
+import { ArrowUpRight, Check, Clipboard } from "lucide-react";
 import JSONPretty from "react-json-pretty";
 import {
   Accordion,
@@ -81,7 +81,8 @@ type ScrapeOption = {
   label: string | React.ReactNode;
   description: string;
   image: string;
-  docs?: string;
+  docsUrl?: string;
+  remixUrl?: string;
 };
 
 const scrapeOptions: ScrapeOption[] = [
@@ -99,6 +100,7 @@ const scrapeOptions: ScrapeOption[] = [
     ),
     description: "Easily extract structured data from any web page using GPT.",
     image: "llmExtractor.png",
+    remixUrl: "https://buildship.app/remix?template=openai-extract-hackernews",
   },
   {
     value: "crawl",
@@ -106,7 +108,8 @@ const scrapeOptions: ScrapeOption[] = [
     description:
       "Crawl a given web url and return the text content. Works great for sites that have multiple pages to scrape.",
     image: "crawler.png",
-    docs: "https://docs.buildship.com/utility-nodes/crawler",
+    docsUrl: "https://docs.buildship.com/utility-nodes/crawler",
+    remixUrl: "https://buildship.app/remix?template=gpt-crawler",
   },
   {
     value: "static",
@@ -114,7 +117,8 @@ const scrapeOptions: ScrapeOption[] = [
     description:
       "Scrape a given web url and return the text content. Works great for less dynamic sites that don't rely on javascript to load.",
     image: "static.png",
-    docs: "https://docs.buildship.com/utility-nodes/scrape-web-url",
+    docsUrl: "https://docs.buildship.com/utility-nodes/scrape-web-url",
+    remixUrl: "https://buildship.app/remix?template=scrape-static-site",
   },
   {
     value: "dynamic",
@@ -122,7 +126,8 @@ const scrapeOptions: ScrapeOption[] = [
     description:
       "Scrape a given web url and return the text content. Works great for more complex sites that rely on javascript to load.",
     image: "dynamic.png",
-    docs: "https://docs.buildship.com/utility-nodes/scrape-web-url-dynamic",
+    docsUrl: "https://docs.buildship.com/utility-nodes/scrape-web-url-dynamic",
+    remixUrl: "https://buildship.app/remix?template=scrape-dynamic-site",
   },
 ];
 
@@ -500,20 +505,43 @@ export default function App() {
                                   <p className="text-sm">
                                     {option.description}
                                   </p>
-                                  {option.docs && (
-                                    <Button
-                                      type="button"
-                                      variant="outline"
-                                      size="sm"
-                                      className="mt-3 text-xs"
-                                      asChild
-                                    >
-                                      <a href={option.docs} target="_blank">
-                                        Read more
-                                        <MoveRight className="ml-2 h-4 w-4" />
-                                      </a>
-                                    </Button>
-                                  )}
+                                  <div className="space-x-2">
+                                    {option.docsUrl && (
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="mt-3 text-xs"
+                                        asChild
+                                      >
+                                        <a
+                                          href={option.docsUrl}
+                                          target="_blank"
+                                        >
+                                          Docs
+                                          <ArrowUpRight className="ml-1 h-4 w-4" />
+                                        </a>
+                                      </Button>
+                                    )}
+                                    {option.remixUrl && (
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="mt-3 text-xs"
+                                        title="Clone template in BuildShip"
+                                        asChild
+                                      >
+                                        <a
+                                          href={option.remixUrl}
+                                          target="_blank"
+                                        >
+                                          Remix
+                                          <ArrowUpRight className="ml-1 h-4 w-4" />
+                                        </a>
+                                      </Button>
+                                    )}
+                                  </div>
                                 </div>
                               </label>
                             ))}
