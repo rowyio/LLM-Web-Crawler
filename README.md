@@ -1,8 +1,6 @@
 # Web Crawler for LLM Apps
 
-## Overview
-
-This playground features working demos for four of BuildShip's scrape nodes, making it easy to extract and gather data from your own websites or other sources. This data can then be used as a knowledge base to power your own LLM apps 🤖, or paired with BuildShip's AI Assistant to unlock powerful use cases and enhance your business or services.
+This playground features working demos for four of BuildShip's scrape nodes, making it easy to extract and gather data from your own websites or other sources. This data can then be used as a knowledge base to power your own LLM apps 🤖, or paired with BuildShip's [AI Assistant](https://docs.buildship.com/ai-assistant/assistant) to unlock powerful use cases and enhance your business or services.
 
 | Node           | Info                                                                                                                                                                                                                                                                                                                | Documentation                                                                | Template                                                                |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
