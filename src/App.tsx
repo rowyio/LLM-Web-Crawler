@@ -98,9 +98,11 @@ const scrapeOptions: ScrapeOption[] = [
         </div>
       </div>
     ),
-    description: "Easily extract structured data from any web page using GPT.",
+    description:
+      "Easily extract structured data from any web page using GPT from OpenAI or Claude from Anthropic.",
     image: "llmExtractor.png",
     remixUrl: "https://buildship.app/remix?template=openai-extract-hackernews",
+    docsUrl: "https://docs.buildship.com/utility-nodes/llm-extract",
   },
   {
     value: "crawl",
@@ -213,10 +215,15 @@ export default function App() {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="px-4 pb-8 pt-4 space-y-14 max-w-7xl mx-auto">
         <header className="border-b pb-2 flex justify-between items-center">
-          <div className="flex items-center">
-            <img src="logo.webp" alt="" width={35} />
-            <h2 className="text-lg">BuildShip Scrape Playground</h2>
-          </div>
+          <a href="https://buildship.com">
+            <div className="flex items-center">
+              <img src="logo.webp" alt="" width={35} />
+              <h2 className="text-lg">
+                BuildShip - Website Scraping Playground
+              </h2>
+            </div>
+          </a>
+
           <ModeToggle />
         </header>
         <div>
@@ -471,7 +478,7 @@ export default function App() {
                       name="mode"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>BuildShip Node (Scrape Mode)</FormLabel>
+                          <FormLabel>Select Scrape Mode</FormLabel>
                           <div className="space-2-4">
                             {scrapeOptions.map((option) => (
                               <label
