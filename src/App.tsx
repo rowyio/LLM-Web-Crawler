@@ -226,7 +226,34 @@ export default function App() {
 
           <ModeToggle />
         </header>
+        <div className="md:flex gap-8 md:justify-center md:items-center bg-secondary p-8 rounded">
+          <div className="lg:w-[500px] md:w-[240px]">
+            <h1 className="text-4xl font-bold mb-4">
+              Watch the full web scraping tutorial with{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-gradient-start via-gradient-middle to-gradient-end">
+                BuildShip
+              </span>
+            </h1>
+          </div>
+          <div className="flex-1">
+            <iframe
+              width="100%"
+              height="350"
+              src="https://www.youtube.com/embed/OJZzwcgjKW8?si=HCru14wFrHC33owG"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
         <div>
+          <h1 className="text-4xl font-bold mb-4">
+            Try web scraping with{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-gradient-start via-gradient-middle to-gradient-end">
+              BuildShip
+            </span>
+          </h1>
           <div>
             <Form {...form}>
               <form
