@@ -2,6 +2,14 @@
 
 This playground features working demos for four of BuildShip's scrape nodes, making it easy to extract and gather data from your own websites or other sources. This data can then be used as a knowledge base to power your own LLM apps 🤖, or paired with BuildShip's [AI Assistant](https://docs.buildship.com/ai-assistant/assistant) to unlock powerful use cases and enhance your business or services.
 
+## Video Tutorial
+
+<a href="https://www.youtube.com/embed/OJZzwcgjKW8?si=HC4d_8BUCWnSaIkk" target="_blank">  
+<img width="600" alt="yotube" src="https://github.com/rowyio/LLM-Web-Crawler/assets/307298/8c2309ee-c753-4a57-b42c-eba2f0bbc809"/>
+</a>
+
+## Features
+
 | Node           | Info                                                                                                                                                                                                                                                                                                                | Documentation                                                                | Template                                                                |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | Scrape         | Easy to get started with, scrape a given web URL and return the text content. Works great for less complex sites that don't rely on JavaScript to load.                                                                                                                                                             | [Read more](https://docs.buildship.com/utility-nodes/scrape-web-url)         | [Remix](https://buildship.app/remix?template=scrape-static-site)        |
